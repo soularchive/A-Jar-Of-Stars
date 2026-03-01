@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Jar of Stars</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --gold: #ffd966;
+            --deep-gold: #e6b422;
+            --bg: #0a0718;
+            --glass: rgba(20, 15, 40, 0.25);
+            --edge-light: rgba(255, 240, 180, 0.5);
+            --text-light: #f3e9d2;
+            --poem-bg: #fef9e7;
+            --poem-text: #2e2a30;
+        }
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 30% 40%, #1f1b38, #03010a);
+            font-family: 'Cormorant Garamond', 'Georgia', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            overflow-y: hidden;
+            color: var(--text-light);
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="30" r="1.2" fill="white" opacity="0.5"/><circle cx="78" cy="18" r="1" fill="white" opacity="0.4"/><circle cx="150" cy="50" r="1.5" fill="white" opacity="0.6"/><circle cx="44" cy="92" r="1" fill="white" opacity="0.3"/><circle cx="120" cy="140" r="1.8" fill="white" opacity="0.5"/><circle cx="180" cy="170" r="1" fill="white" opacity="0.4"/><circle cx="30" cy="180" r="1.2" fill="white" opacity="0.5"/></svg>');
+            background-size: 300px 300px;
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .poetic-title {
+            position: relative;
+            z-index: 10;
+            margin-bottom: 18px;
+            text-align: center;
+            font-size: 2.4rem;
+            letter-spacing: 6px;
+            font-weight: 400;
+            color: #fffbe6;
+            text-shadow: 0 0 15px #ffd966aa, 0 0 30px #b8860b;
+            font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+            transform: scaleY(1.02);
+            animation: titleGlow 4s infinite alternate;
+        }
+        .poetic-title span {
+            display: block;
+            font-size: 0.9rem;
+            letter-spacing: 8px;
+            margin-top: -8px;
+            opacity: 0.7;
+            font-style: italic;
+        }
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 20px #ffb347, 0 0 35px #b8860b; }
+            100% { text-shadow: 0 0 35px #ffe794, 0 0 60px #ffd700; }
+        }
+        .jar-section {
+            position: relative;
+            z-index: 15;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            filter: drop-shadow(0 20px 30px #00000080);
+            animation: floatJar 5s ease-in-out infinite;
+        }
+        @keyframes floatJar {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+        #jar-wrapper {
+            position: relative;
+            width: 150px;
+            height: 200px;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.2, 1.2, 0.3, 1);
+        }
+        #jar-wrapper:active {
+            transform: scale(0.92);
+        }
+        .jar-glass {
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(255, 235, 170, 0.45);
+            border-radius: 24px 24px 60px 60px;
+            background: rgba(30, 20, 50, 0.2);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: inset 0 -12px 25px rgba(255, 215, 0, 0.25), inset 0 8px 15px rgba(255,255,240,0.2), 0 15px 25px #00000070;
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid rgba(255, 242, 180, 0.7);
+        }
+        .jar-glass::after {
+            content: '';
+            position: absolute;
+            top: 10px; left: 15px;
+            width: 45px; height: 22px;
+            background: radial-gradient(circle, rgba(255,255,240,0.35) 0%, transparent 80%);
+            border-radius: 50%;
+            opacity: 0.6;
+            z-index: 4;
+        }
+        #jar-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 0%;
+            background: linear-gradient(135deg, #ffd966ee 0%, #fbbf24 45%, #f5e56b 100%);
+            transition: height 0.55s cubic-bezier(0.34, 1.4, 0.64, 1);
+            border-radius: 0 0 55px 55px;
+            box-shadow: 0 -10px 30px #ffd966, inset 0 5px 15px #fffeca;
+            z-index: 2;
+        }
+        .static-sparkle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: #fffbb0;
+            border-radius: 50%;
+            bottom: 10%; left: 30%;
+            box-shadow: 0 0 12px 2px gold;
+            opacity: 0.6;
+            filter: blur(1px);
+        }
+        .counter {
+            position: relative;
+            z-index: 16;
+            margin-top: 16px;
+            font-size: 0.95rem;
+            background: rgba(10, 5, 20, 0.6);
+            backdrop-filter: blur(4px);
+            padding: 5px 25px;
+            border-radius: 60px;
+            border: 1px solid var(--edge-light);
+            letter-spacing: 2.5px;
+            color: #ffeca2;
+            font-weight: 300;
+        }
+        #message-display {
+            margin-top: 26px;
+            height: 75px;
+            text-align: center;
+            font-size: 1.35rem;
+            max-width: 75%;
+            font-weight: 350;
+            line-height: 1.4;
+            color: #fff4d6;
+            text-shadow: 0 0 12px #ffbb33;
+            transition: opacity 0.25s;
+            z-index: 15;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        #reveal-btn {
+            display: none;
+            margin-top: 25px;
+            padding: 15px 42px;
+            background: #f5e18b;
+            border: none;
+            border-radius: 60px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            color: #1b142c;
+            cursor: pointer;
+            box-shadow: 0 0 40px #ffb347, 0 5px 15px #00000080;
+            transition: 0.3s;
+            font-family: 'Cormorant Garamond', serif;
+            border: 2px solid #fff9cf;
+            animation: buttonGlow 2.4s infinite alternate;
+            z-index: 20;
+        }
+        #reveal-btn:hover {
+            background: #ffea9e;
+            transform: scale(1.06);
+            box-shadow: 0 0 70px gold;
+        }
+        @keyframes buttonGlow {
+            0% { box-shadow: 0 0 30px #ffb84d; }
+            100% { box-shadow: 0 0 60px #ffeeaa; }
+        }
+        #poem-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -150%);
+            width: 85%;
+            max-width: 600px;
+            max-height: 75vh;
+            background: #fefcf0;
+            color: #241f31;
+            border-radius: 32px;
+            box-shadow: 0 40px 80px #000000cc, 0 0 0 3px #fffacd, 0 0 0 6px #a77c3f33;
+            overflow-y: auto;
+            z-index: 200;
+            font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+            border: 1px solid #ffefb0;
+            transition: transform 1s cubic-bezier(0.25, 1.2, 0.35, 1), opacity 0.5s;
+            opacity: 0;
+            pointer-events: none;
+            scrollbar-width: thin;
+            scrollbar-color: #c7a252 #f5e5c0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        #poem-box.show {
+            display: block;
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%);
+            animation: gentleRise 1.2s cubic-bezier(0.22, 1.1, 0.33, 1) forwards;
+        }
+        @keyframes gentleRise {
+            0% { transform: translate(-50%, -40%); opacity: 0; }
+            100% { transform: translate(-50%, -50%); opacity: 1; }
+        }
+        .poem-inner {
+            padding: 48px 42px 54px 42px;
+            width: 100%;
+            min-height: 100%;
+            box-sizing: border-box;
+        }
+        .poem-title {
+            font-size: 2.2rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            color: #3b2e1e;
+            text-align: center;
+            border-bottom: 1px solid #e9d6a5;
+            padding-bottom: 20px;
+            margin-bottom: 28px;
+            line-height: 1.3;
+            font-family: 'Cormorant Garamond', serif;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+        }
+        .poem-body {
+            white-space: pre-wrap;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            font-weight: 450;
+            color: #2e2a30;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        #poem-box::-webkit-scrollbar {
+            width: 8px;
+        }
+        #poem-box::-webkit-scrollbar-track {
+            background: #faefd2;
+            border-radius: 30px;
+            margin-block: 20px;
+        }
+        #poem-box::-webkit-scrollbar-thumb {
+            background: #ba9f65;
+            border-radius: 30px;
+            border: 2px solid #faefd2;
+        }
+        .star {
+            position: absolute;
+            pointer-events: none;
+            font-size: 2rem;
+            z-index: 9999;
+            filter: drop-shadow(0 0 12px gold) drop-shadow(0 0 25px #ffb703);
+            animation: flyAway 2.1s ease-out forwards;
+            will-change: transform, opacity;
+        }
+        @keyframes flyAway {
+            0% { transform: translate(0, 0) scale(1.2); opacity: 1; }
+            70% { opacity: 0.8; }
+            100% { transform: translate(var(--x), var(--y)) scale(0.1); opacity: 0; }
+        }
+        .star-burst {
+            font-size: 2.2rem;
+            animation: flyAway 2.5s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+        }
+        .jar-hidden {
+            opacity: 0 !important;
+            pointer-events: none !important;
+            transition: opacity 0.8s;
+        }
+        footer {
+            position: fixed;
+            bottom: 12px;
+            right: 20px;
+            font-size: 0.7rem;
+            opacity: 0.3;
+            font-style: italic;
+            z-index: 10;
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <h1 class="poetic-title">A JAR OF STARS <span>fill it with light</span></h1>
+
+    <div class="jar-section">
+        <div id="jar-wrapper">
+            <div class="jar-glass">
+                <div id="jar-fill"></div>
+                <div class="static-sparkle" style="bottom: 12%; left: 25%;"></div>
+                <div class="static-sparkle" style="bottom: 28%; left: 68%; width: 5px; height:5px;"></div>
+                <div class="static-sparkle" style="bottom: 45%; left: 40%; opacity:0.4;"></div>
+            </div>
+        </div>
+        <div class="counter"><span id="count">0</span> / 50  ✦  WISHES</div>
+    </div>
+
+    <div id="message-display">✧  tap the jar · gather stardust  ✧</div>
+    <button id="reveal-btn">✦  open the letter  ✦</button>
+
+    <div id="poem-box">
+        <div class="poem-inner">
+            <div class="poem-title">When the Cosmos Lost Its Authority</div>
+            <div class="poem-body">
+They told me the stars were ancient,
+that they were the oldest beauty we know,
+burning for millions of years
+just to be seen for a second.
+ㅤ
+Then I met her,
+and suddenly the sky felt… outdated.
+ㅤ
+Astronomers spend lifetimes
+decoding constellations,
+naming distant fires,
+mapping cold brilliance
+that cannot feel the hands that worship it.
+ㅤ
+But her eyes,
+her eyes do not need telescopes.
+They do not live light-years away.
+They look back.
+They respond.
+They understand.
+ㅤ
+Stars collapse in on themselves.
+They die spectacular deaths
+and call it glory.
+She, on the other hand,
+creates life in silence,
+with a laugh that rebuilds tired hearts,
+with a voice that steadies gravity in my chest.
+ㅤ
+The sky is admired because it is unreachable.
+She is extraordinary because she is near.
+Because her beauty is not a performance
+for distant observers.
+It is something you feel
+in the marrow.
+ㅤ
+The stars glitter like scattered diamonds,
+but they flicker,
+tiny, trembling things
+fighting the dark.
+She does not flicker.
+She remains.
+Even in her doubt,
+even in her quiet moments,
+there is a steady radiance
+that makes galaxies feel insecure.
+ㅤ
+If the universe could see her,
+it would rearrange itself.
+Constellations would unlearn their patterns.
+Supernovas would dim politely.
+The night would apologize
+for ever thinking it was magnificent.
+ㅤ
+Because the truth is,
+the stars are just distant fires
+burning alone.
+ㅤ
+She is warmth.
+She is gravity.
+She is the reason I look up
+and realize
+ㅤ
+the most breathtaking thing in existence
+isn’t above me.
+ㅤ
+It’s her.</div>
+        </div>
+    </div>
+
+    <footer>✦ for you ✦</footer>
+
+    <script>
+        (function() {
+            const maxWishes = 50;
+            let currentWishes = 0;
+
+            const jarWrapper = document.getElementById('jar-wrapper');
+            const jarFill = document.getElementById('jar-fill');
+            const countSpan = document.getElementById('count');
+            const messageEl = document.getElementById('message-display');
+            const revealBtn = document.getElementById('reveal-btn');
+            const poemBox = document.getElementById('poem-box');
+            const jarSection = document.querySelector('.jar-section');
+            const counterEl = document.querySelector('.counter');
+
+            const messages = [
+                "you are my favorite human.", "your laugh is better than my favorite song.", "i'm so incredibly proud of you.", "you make every day feel lighter.", "hope you're having a great hair day.",
+                "you have the kindest heart.", "you're 100% my person.", "i love the way your brain works.", "you're smarter than you think.", "10 stars! you're a masterpiece ✨",
+                "thinking of you makes my day.", "you're the 'fine' in 'everything's fine'", "i'd share my last pizza slice with you.", "you're the glitter of my life.", "i love your goofy side.",
+                "you're doing a great job at life.", "world is better because you're in it.", "you're a whole vibe.", "you're a cute-cumber 🥒", "20 stars! you're amazing 💖",
+                "i'm your biggest fan. always.", "your energy is contagious.", "you deserve all the snacks.", "i like your face. a lot.", "you're the GOAT.",
+                "massive digital hug sent 🤗", "you make me a better version of myself.", "i appreciate everything you do.", "you're the main character.", "30 stars! you're unstoppable 🌟",
+                "you have the best smile.", "i'm so lucky i know you.", "you're my favorite notification.", "stay exactly as you are.", "you're a rare find.",
+                "i'd do boring errands with you.", "you're the sprinkles on the cupcake.", "i love our inside jokes.", "you're my sunshine.", "40 stars! you're glowing 🌷",
+                "you're the best part of my day.", "so glad we exist at same time.", "you're incredibly talented.", "everything is more fun with you.", "you're my favorite place to be.",
+                "i love you more than coffee.", "you're a total rockstar.", "i've always got your back.", "you're basically magic.", "50 stars — the jar is full 🌙✨"
+            ];
+
+            function spawnStar(burst = false) {
+                const jarRect = jarWrapper.getBoundingClientRect();
+                const baseX = jarRect.left + jarRect.width / 2;
+                const baseY = jarRect.top + jarRect.height * 0.3;
+                const count = burst ? 20 : 1;
+                for (let i = 0; i < count; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star' + (burst ? ' star-burst' : '');
+                    if (burst) {
+                        star.innerHTML = (i % 3 === 0) ? '⭐' : (i % 3 === 1) ? '✨' : '🌠';
+                    } else {
+                        star.innerHTML = Math.random() > 0.6 ? '⭐' : '✨';
+                    }
+                    const xMove = (Math.random() - 0.5) * (burst ? 750 : 420);
+                    const yMove = (Math.random() * -650) - 100;
+                    star.style.setProperty('--x', xMove + 'px');
+                    star.style.setProperty('--y', yMove + 'px');
+                    star.style.left = baseX + 'px';
+                    star.style.top = baseY + 'px';
+                    document.body.appendChild(star);
+                    setTimeout(() => star.remove(), 2100);
+                }
+            }
+
+            function collectStar() {
+                if (currentWishes >= maxWishes) {
+                    spawnStar(false);
+                    return;
+                }
+                currentWishes++;
+                countSpan.innerText = currentWishes;
+                jarFill.style.height = (currentWishes * 2) + '%';
+                messageEl.style.opacity = '0';
+                setTimeout(() => {
+                    messageEl.innerText = messages[currentWishes - 1];
+                    messageEl.style.opacity = '1';
+                }, 120);
+                const isMilestone = (currentWishes % 10 === 0);
+                spawnStar(isMilestone);
+                if (currentWishes === maxWishes) {
+                    setTimeout(() => {
+                        revealBtn.style.display = 'block';
+                        messageEl.innerText = '✧ the jar overflows with starlight ✧';
+                    }, 550);
+                }
+            }
+
+            function showPoem() {
+                jarSection.classList.add('jar-hidden');
+                counterEl.classList.add('jar-hidden');
+                revealBtn.style.opacity = '0';
+                setTimeout(() => {
+                    revealBtn.style.display = 'none';
+                }, 400);
+                messageEl.style.display = 'none';
+                poemBox.classList.add('show');
+            }
+
+            jarWrapper.addEventListener('click', collectStar);
+            revealBtn.addEventListener('click', showPoem);
+            messageEl.innerText = '✧  tap the jar · gather stardust  ✧';
+            jarFill.style.height = '0%';
+            countSpan.innerText = '0';
+        })();
+    </script>
+</body>
+</html>
